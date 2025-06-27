@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-session_start(); // Pastikan sesi dimulai untuk akses $_SESSION
+session_start();
 
 // Debugging: Tampilkan semua error PHP
 ini_set('display_errors', 1);
@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 ob_start(); // Mulai output buffering
 
 try {
-    // Memuat file koneksi database. Path ini diasumsikan db_connect.php di folder 'api'
+    // Memuat file koneksi database
     require_once 'db_connect.php';
 
     // Periksa koneksi database
@@ -39,7 +39,7 @@ try {
     $delivery_address = $data['delivery_address'] ?? null;
     $total_amount = $data['total_amount'] ?? null;
     $notes = $data['notes'] ?? null;
-    $items = $data['items'] ?? []; // Array item pesanan
+    $items = $data['items'] ?? [];
 
     if (!$delivery_address || !$total_amount || empty($items)) {
         ob_end_clean();
@@ -71,14 +71,14 @@ try {
 
     foreach ($items as $item) {
         $product_id = $item['id'] ?? null;
-        // PENTING: Pastikan 'name' ada dan ambil nilainya. Gunakan operator null coalescing.
-        $product_name = $item['name'] ?? 'Unknown Product'; 
+        $product_name = $item['name'] ?? 'Unknown Product';
         $quantity = $item['quantity'] ?? null;
         $price_at_order = $item['price'] ?? null;
-        $image_url = $item['image_url'] ?? null; 
+        $image_url = $item['image'] ?? null;
 
-        // Debugging: Log data item sebelum bind_param
-        // error_log("Debug Item: ID=" . $product_id . ", Name=" . $product_name . ", Qty=" . $quantity . ", Price=" . $price_at_order . ", Image=" . $image_url);
+        if (!$product_id || !$quantity || !$price_at_order) {
+            throw new Exception('Item data tidak lengkap');
+        }
 
         $item_stmt->bind_param("isisds", $order_id, $product_id, $product_name, $quantity, $price_at_order, $image_url);
         if (!$item_stmt->execute()) {
@@ -99,7 +99,7 @@ try {
         $conn->rollback();
     }
     ob_end_clean();
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Terjadi kesalahan saat menempatkan pesanan: ' . $e->getMessage()]);
 } finally {
     if (isset($conn) && $conn instanceof mysqli) {

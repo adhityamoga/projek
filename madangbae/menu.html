@@ -13,7 +13,6 @@
 </head>
 
 <body>
-
     <header>
         <div class="container">
             <div class="logo">
@@ -24,12 +23,13 @@
                 <a href="index.html">Home</a>
                 <a href="menu.html" class="active">Menu</a>
                 <a href="pesanan.php">Pesanan</a>
-                <a href="keranjang.html">Keranjang</a>
+                <a href="keranjang.html">
+                    Keranjang
+                    <span id="cartQuantity" class="cart-quantity">0</span>
+                </a>
             </nav>
             <div class="user-actions">
-                </a>
-                <span></span> <!-- Untuk "Halo, Nama!" -->
-                <a href="profil.html" class="btn-signup">Profil Saya</a>
+                <!-- Content will be populated by JavaScript -->
             </div>
         </div>
     </header>
@@ -56,6 +56,8 @@
         </div>
     </footer>
 
+    <div id="responseMessage" class="response-message" style="display: none;"></div>
+    
     <script src="js/app.js"></script>
 </body>
 

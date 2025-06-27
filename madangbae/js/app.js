@@ -1,5 +1,5 @@
 // js/app.js
-// Ini adalah file JavaScript utama untuk aplikasi Warung MadangBae.
+// File JavaScript utama untuk aplikasi Warung MadangBae.
 // Mengelola semua fungsionalitas frontend seperti menampilkan menu,
 // keranjang belanja, checkout, autentikasi pengguna, dan pembaruan UI.
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Menampilkan pesan respons (sukses/error) di UI.
      * Digunakan terutama pada halaman autentikasi (daftar, login) dan profil.
      * @param {string} message - Pesan yang akan ditampilkan.
-     * @param {'success'|'error'} type - Tipe pesan untuk styling.
+     * @param {'success'|'error'|'info'} type - Tipe pesan untuk styling.
      */
     function showResponseMessage(message, type) {
         const responseMessageDiv = document.getElementById('responseMessage');
@@ -79,65 +79,80 @@ document.addEventListener('DOMContentLoaded', () => {
      * Memperbarui UI berdasarkan status autentikasi pengguna.
      * Mengatur tampilan tombol Login/Daftar atau Profil Saya.
      */
-    function updateAuthUI() {
+    async function updateAuthUI() {
         const userActionsDiv = document.querySelector('.user-actions');
         if (!userActionsDiv) return;
 
-        // Asumsi user sudah login jika ada 'user_name' di localStorage atau session
-        // Dalam kasus nyata, ini harus divalidasi oleh server melalui token atau session.
-        const userName = localStorage.getItem('user_name'); // Ambil nama pengguna dari localStorage
-        const isLoggedIn = !!userName; // True jika userName tidak null/kosong
+        try {
+            // Cek status login dari server
+            const response = await fetch('api/get_session.php');
+            const data = await response.json();
 
-        userActionsDiv.innerHTML = ''; // Kosongkan dulu
+            userActionsDiv.innerHTML = ''; // Kosongkan dulu
 
-        if (isLoggedIn) {
-            // Tampilkan nama pengguna dan tombol profil
-            const userNameSpan = document.createElement('span');
-            userNameSpan.textContent = `Halo, ${userName}!`;
-            userNameSpan.style.marginRight = '10px';
-            userNameSpan.style.fontWeight = 'bold';
-            userNameSpan.style.color = '#333'; // Warna teks yang kontras
-            userActionsDiv.appendChild(userNameSpan);
+            if (data.isLoggedIn) {
+                // Tampilkan nama pengguna dan tombol profil
+                const userNameSpan = document.createElement('span');
+                userNameSpan.textContent = `Halo, ${data.user.username}!`;
+                userNameSpan.style.marginRight = '10px';
+                userNameSpan.style.fontWeight = 'bold';
+                userNameSpan.style.color = '#fff';
+                userActionsDiv.appendChild(userNameSpan);
 
-            const profileLink = document.createElement('a');
-            profileLink.href = 'profil.html';
-            profileLink.className = 'btn-signup'; // Gunakan kelas yang sama untuk styling
-            profileLink.textContent = 'Profil Saya';
-            userActionsDiv.appendChild(profileLink);
+                const profileLink = document.createElement('a');
+                profileLink.href = 'profil.html';
+                profileLink.className = 'btn-signup';
+                profileLink.textContent = 'Profil Saya';
+                userActionsDiv.appendChild(profileLink);
 
-            const logoutBtn = document.createElement('button');
-            logoutBtn.textContent = 'Logout';
-            logoutBtn.className = 'btn-logout'; // Tambahkan kelas untuk styling
-            logoutBtn.style.marginLeft = '10px';
-            logoutBtn.style.padding = '8px 15px';
-            logoutBtn.style.border = 'none';
-            logoutBtn.style.borderRadius = '5px';
-            logoutBtn.style.backgroundColor = '#dc3545'; /* Warna merah untuk logout */
-            logoutBtn.style.color = 'white';
-            logoutBtn.style.cursor = 'pointer';
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('user_id');
-                localStorage.removeItem('user_name');
-                showResponseMessage('Anda telah berhasil logout.', 'success');
-                setTimeout(() => {
-                    window.location.href = 'login.html'; // Redirect ke halaman login setelah logout
-                }, 1500);
-            });
-            userActionsDiv.appendChild(logoutBtn);
+                const logoutBtn = document.createElement('button');
+                logoutBtn.textContent = 'Logout';
+                logoutBtn.className = 'btn-logout';
+                logoutBtn.style.marginLeft = '10px';
+                logoutBtn.style.padding = '8px 15px';
+                logoutBtn.style.border = 'none';
+                logoutBtn.style.borderRadius = '5px';
+                logoutBtn.style.backgroundColor = '#dc3545';
+                logoutBtn.style.color = 'white';
+                logoutBtn.style.cursor = 'pointer';
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        await fetch('api/logout.php');
+                        showResponseMessage('Anda telah berhasil logout.', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        showResponseMessage('Terjadi kesalahan saat logout.', 'error');
+                    }
+                });
+                userActionsDiv.appendChild(logoutBtn);
 
-        } else {
-            // Tampilkan tombol Login dan Daftar
-            const loginLink = document.createElement('a');
-            loginLink.href = 'login.html';
-            loginLink.className = 'btn-login';
-            loginLink.textContent = 'Login';
-            userActionsDiv.appendChild(loginLink);
+            } else {
+                // Tampilkan tombol Login dan Daftar
+                const loginLink = document.createElement('a');
+                loginLink.href = 'login.html';
+                loginLink.className = 'btn-login';
+                loginLink.textContent = 'Login';
+                loginLink.style.marginRight = '10px';
+                loginLink.style.color = '#fff';
+                loginLink.style.textDecoration = 'none';
+                userActionsDiv.appendChild(loginLink);
 
-            const signupLink = document.createElement('a');
-            signupLink.href = 'daftar.html';
-            signupLink.className = 'btn-signup';
-            signupLink.textContent = 'Daftar';
-            userActionsDiv.appendChild(signupLink);
+                const signupLink = document.createElement('a');
+                signupLink.href = 'daftar.html';
+                signupLink.className = 'btn-signup';
+                signupLink.textContent = 'Daftar';
+                userActionsDiv.appendChild(signupLink);
+            }
+        } catch (error) {
+            console.error('Error updating auth UI:', error);
+            // Fallback ke tampilan tidak login
+            userActionsDiv.innerHTML = `
+                <a href="login.html" class="btn-login" style="margin-right: 10px; color: #fff; text-decoration: none;">Login</a>
+                <a href="daftar.html" class="btn-signup">Daftar</a>
+            `;
         }
     }
 
@@ -156,14 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
          * Mengambil data pesanan dari API.
          */
         async function loadUserOrders() {
-            showResponseMessage('Memuat pesanan Anda...', 'info'); // Tampilkan pesan loading
+            showResponseMessage('Memuat pesanan Anda...', 'info');
             try {
                 const response = await fetch('api/get_orders.php');
                 const data = await response.json();
 
                 if (data.status === 'error') {
                     showResponseMessage(data.message, 'error');
-                    // Tampilkan pesan tidak ada pesanan jika tidak login atau error
                     currentOrdersContainer.innerHTML = '<p class="empty-orders-message">Tidak ada pesanan yang sedang berjalan saat ini.</p>';
                     pastOrdersContainer.innerHTML = '<p class="empty-orders-message">Belum ada riwayat pesanan.</p>';
                     return;
@@ -175,12 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterAndDisplayOrders();
                 showResponseMessage('Pesanan berhasil dimuat.', 'success');
                 setTimeout(() => {
-                    document.getElementById('responseMessage').style.display = 'none';
-                }, 1500); // Sembunyikan setelah 1.5 detik
+                    const responseMsg = document.getElementById('responseMessage');
+                    if (responseMsg) responseMsg.style.display = 'none';
+                }, 1500);
             } catch (error) {
                 console.error('Error loading orders:', error);
                 showResponseMessage('Gagal memuat pesanan. Silakan coba lagi.', 'error');
-                // Tampilkan pesan tidak ada pesanan jika terjadi error
                 currentOrdersContainer.innerHTML = '<p class="empty-orders-message">Gagal memuat pesanan.</p>';
                 pastOrdersContainer.innerHTML = '<p class="empty-orders-message">Gagal memuat riwayat pesanan.</p>';
             }
@@ -190,8 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
          * Memfilter pesanan berdasarkan status dan menampilkannya.
          */
         function filterAndDisplayOrders() {
-            currentOrdersContainer.innerHTML = ''; // Kosongkan kontainer
-            pastOrdersContainer.innerHTML = '';   // Kosongkan kontainer
+            currentOrdersContainer.innerHTML = '';
+            pastOrdersContainer.innerHTML = '';
 
             const currentOrders = allOrders.filter(order =>
                 ['pending', 'preparing', 'on_delivery'].includes(order.status)
@@ -207,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const activeTabId = document.querySelector('.tab-link.active')?.dataset.tab || 'current-orders';
             activateTab(activeTabId);
         }
-
 
         /**
          * Merender daftar pesanan ke dalam kontainer yang ditentukan.
@@ -241,10 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                     });
                 } else {
-                    // Fallback jika order.items tidak ada atau bukan array
                     itemsHtml = '<p>Detail item tidak tersedia.</p>';
                 }
-
 
                 let actionButtonsHtml = '';
                 // Tombol "Batalkan" hanya untuk status 'pending' atau 'preparing'
@@ -259,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (order.status === 'delivered' || order.status === 'cancelled') {
                     actionButtonsHtml += `<button class="btn-action btn-reorder" data-order-id="${order.id}">Pesan Lagi</button>`;
                 }
-
 
                 orderCard.innerHTML = `
                     <div class="order-card-header">
@@ -321,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
          * @param {number} orderId - ID pesanan yang akan di-reorder.
          */
         async function reorder(orderId) {
-            // Dapatkan detail pesanan dari `allOrders` yang sudah dimuat
             const orderToReorder = allOrders.find(order => order.id === orderId);
 
             if (!orderToReorder || !orderToReorder.items || orderToReorder.items.length === 0) {
@@ -335,14 +344,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 orderToReorder.items.forEach(item => {
                     const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.product_id);
                     if (existingItemIndex > -1) {
-                        // Jika item sudah ada, tambahkan kuantitasnya
                         cart[existingItemIndex].quantity += item.quantity;
                     } else {
-                        // Jika item belum ada, tambahkan sebagai item baru
                         cart.push({
                             id: item.product_id,
                             name: item.product_name,
-                            price: item.price_at_order, // Gunakan harga saat dipesan sebelumnya
+                            price: item.price_at_order,
                             image: item.image_url,
                             quantity: item.quantity
                         });
@@ -350,15 +357,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 localStorage.setItem('cart', JSON.stringify(cart));
-                updateCartIconQuantity(); // Perbarui ikon keranjang
+                updateCartIconQuantity();
 
                 showResponseMessage('Item telah ditambahkan ke keranjang!', 'success');
                 setTimeout(() => {
-                    window.location.href = 'keranjang.html'; // Arahkan ke halaman keranjang
+                    window.location.href = 'keranjang.html';
                 }, 1500);
             }
         }
-
 
         // Event Listeners untuk Tab
         tabLinks.forEach(link => {
@@ -366,12 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const targetTab = this.dataset.tab;
                 activateTab(targetTab);
-                // Opsional: perbarui hash URL jika diinginkan
-                // window.location.hash = targetTab;
             });
         });
 
-        // Event listener delegasi untuk tombol aksi (Batalkan, Selesai, Pesan Lagi)
+        // Event listener delegasi untuk tombol aksi
         document.querySelector('.order-sections').addEventListener('click', function(event) {
             const target = event.target;
             if (target.classList.contains('btn-cancel')) {
@@ -396,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const targetSection = document.getElementById(tabId);
-            const targetLink = document.querySelector(`.tab-link[data-tab=\"${tabId}\"]`);
+            const targetLink = document.querySelector(`.tab-link[data-tab="${tabId}"]`);
 
             if (targetSection) targetSection.classList.add('active-tab');
             if (targetLink) targetLink.classList.add('active');
@@ -404,23 +408,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Muat pesanan saat halaman dimuat
         loadUserOrders();
-        updateCartIconQuantity(); // Pastikan ikon keranjang diperbarui
-        updateAuthUI(); // Perbarui UI autentikasi saat halaman dimuat
+        updateCartIconQuantity();
+        updateAuthUI();
     }
-
 
     // ===========================================
     // Halaman Menu (menu.html)
     // ===========================================
     if (window.location.pathname.includes('menu.html')) {
-        const productGrid = document.getElementById('productGrid');
-        const searchInput = document.getElementById('searchInput');
+        const productGrid = document.getElementById('menuGrid');
+        const searchInput = document.getElementById('menuSearchInput');
 
         async function loadProducts() {
             try {
                 const response = await fetch('api/get_products.php');
                 const products = await response.json();
-                allProductsData = products; // Simpan semua produk
+                
+                if (products.status === 'error') {
+                    productGrid.innerHTML = '<p class="empty-orders-message">Gagal memuat menu: ' + products.message + '</p>';
+                    return;
+                }
+                
+                allProductsData = products;
                 displayProducts(products);
             } catch (error) {
                 console.error('Error loading products:', error);
@@ -429,20 +438,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function displayProducts(products) {
-            productGrid.innerHTML = ''; // Clear existing products
+            productGrid.innerHTML = '';
             if (products.length === 0) {
                 productGrid.innerHTML = '<p class="empty-orders-message">Tidak ada menu yang ditemukan.</p>';
                 return;
             }
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'product-card';
+                productCard.className = 'food-card';
                 productCard.innerHTML = `
                     <img src="${product.image_url || 'https://via.placeholder.com/150'}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p class="product-description">${product.description.substring(0, 70)}...</p>
-                    <p class="product-price">${formatRupiah(product.price)}</p>
-                    <button class="add-to-cart-btn" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image_url}">
+                    <h4>${product.name}</h4>
+                    <p class="product-description">${product.description ? product.description.substring(0, 70) + '...' : 'Tidak ada deskripsi'}</p>
+                    <p class="price">${formatRupiah(product.price)}</p>
+                    <button class="btn-order" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image_url}">
                         Tambah ke Keranjang
                     </button>
                 `;
@@ -450,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Add to cart event listeners
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            document.querySelectorAll('.btn-order').forEach(button => {
                 button.addEventListener('click', addToCart);
             });
         }
@@ -461,10 +470,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const searchTerm = searchInput.value.toLowerCase();
                 const filteredProducts = allProductsData.filter(product =>
                     product.name.toLowerCase().includes(searchTerm) ||
-                    product.description.toLowerCase().includes(searchTerm)
+                    (product.description && product.description.toLowerCase().includes(searchTerm))
                 );
                 displayProducts(filteredProducts);
-            }, 300); // Debounce search input
+            }, 300);
         }
 
         function addToCart(event) {
@@ -488,40 +497,45 @@ document.addEventListener('DOMContentLoaded', () => {
             showResponseMessage(`${name} ditambahkan ke keranjang!`, 'success');
         }
 
-        searchInput.addEventListener('input', filterProducts);
+        if (searchInput) {
+            searchInput.addEventListener('input', filterProducts);
+        }
         loadProducts();
         updateCartIconQuantity();
         updateAuthUI();
     }
 
-
     // ===========================================
     // Halaman Keranjang (keranjang.html)
     // ===========================================
     if (window.location.pathname.includes('keranjang.html')) {
-        const cartItemsContainer = document.getElementById('cartItems');
-        const cartTotalElement = document.getElementById('cartTotal');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const subtotalElement = document.getElementById('subtotalPrice');
         const deliveryFeeElement = document.getElementById('deliveryFee');
-        const grandTotalElement = document.getElementById('grandTotal');
-        const checkoutBtn = document.getElementById('checkoutBtn');
+        const finalTotalElement = document.getElementById('finalTotalPrice');
+        const totalItemsElement = document.getElementById('totalItems');
+        const checkoutBtn = document.querySelector('.btn-checkout');
 
         function renderCart() {
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             cartItemsContainer.innerHTML = '';
             let subtotal = 0;
+            let totalItems = 0;
 
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '<p class="empty-orders-message">Keranjang belanja Anda kosong.</p>';
-                cartTotalElement.textContent = formatRupiah(0);
-                deliveryFeeElement.textContent = formatRupiah(0);
-                grandTotalElement.textContent = formatRupiah(0);
-                checkoutBtn.disabled = true;
+                if (subtotalElement) subtotalElement.textContent = formatRupiah(0);
+                if (deliveryFeeElement) deliveryFeeElement.textContent = formatRupiah(0);
+                if (finalTotalElement) finalTotalElement.textContent = formatRupiah(0);
+                if (totalItemsElement) totalItemsElement.textContent = '0';
+                if (checkoutBtn) checkoutBtn.style.pointerEvents = 'none';
                 return;
             }
 
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
                 subtotal += itemTotal;
+                totalItems += item.quantity;
 
                 const cartItemDiv = document.createElement('div');
                 cartItemDiv.className = 'cart-item';
@@ -529,25 +543,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}">
                     <div class="item-details">
                         <h3>${item.name}</h3>
-                        <p class="item-price">${formatRupiah(item.price)}</p>
+                        <p class="price">${formatRupiah(item.price)}</p>
                     </div>
-                    <div class="item-quantity-controls">
+                    <div class="quantity-selector">
                         <button class="qty-btn decrement" data-id="${item.id}">-</button>
-                        <span class="quantity">${item.quantity}</span>
+                        <span>${item.quantity}</span>
                         <button class="qty-btn increment" data-id="${item.id}">+</button>
                     </div>
-                    <span class="item-total">${formatRupiah(itemTotal)}</span>
-                    <button class="remove-item-btn" data-id="${item.id}"><i class="fa-solid fa-trash"></i></button>
+                    <span class="remove-item" data-id="${item.id}">
+                        <i class="fa-solid fa-trash"></i>
+                    </span>
                 `;
                 cartItemsContainer.appendChild(cartItemDiv);
             });
 
             const grandTotal = subtotal + deliveryFee;
 
-            cartTotalElement.textContent = formatRupiah(subtotal);
-            deliveryFeeElement.textContent = formatRupiah(deliveryFee);
-            grandTotalElement.textContent = formatRupiah(grandTotal);
-            checkoutBtn.disabled = false;
+            if (subtotalElement) subtotalElement.textContent = formatRupiah(subtotal);
+            if (deliveryFeeElement) deliveryFeeElement.textContent = formatRupiah(deliveryFee);
+            if (finalTotalElement) finalTotalElement.textContent = formatRupiah(grandTotal);
+            if (totalItemsElement) totalItemsElement.textContent = totalItems.toString();
+            if (checkoutBtn) checkoutBtn.style.pointerEvents = 'auto';
 
             attachCartEventListeners();
             updateCartIconQuantity();
@@ -555,11 +571,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function attachCartEventListeners() {
             document.querySelectorAll('.qty-btn').forEach(button => {
-                button.removeEventListener('click', handleQuantityChange); // Prevent duplicate listeners
                 button.addEventListener('click', handleQuantityChange);
             });
-            document.querySelectorAll('.remove-item-btn').forEach(button => {
-                button.removeEventListener('click', removeItemFromCart); // Prevent duplicate listeners
+            document.querySelectorAll('.remove-item').forEach(button => {
                 button.addEventListener('click', removeItemFromCart);
             });
         }
@@ -574,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (button.classList.contains('decrement')) {
                     cart[itemIndex].quantity--;
                     if (cart[itemIndex].quantity <= 0) {
-                        cart.splice(itemIndex, 1); // Remove if quantity is 0 or less
+                        cart.splice(itemIndex, 1);
                     }
                 } else if (button.classList.contains('increment')) {
                     cart[itemIndex].quantity++;
@@ -585,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function removeItemFromCart(event) {
-            const button = event.target.closest('.remove-item-btn');
+            const button = event.target.closest('.remove-item');
             const id = parseInt(button.dataset.id);
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             cart = cart.filter(item => item.id !== id);
@@ -594,54 +608,64 @@ document.addEventListener('DOMContentLoaded', () => {
             showResponseMessage('Item berhasil dihapus dari keranjang.', 'success');
         }
 
-        checkoutBtn.addEventListener('click', () => {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            if (cart.length === 0) {
-                showResponseMessage('Keranjang Anda kosong. Tambahkan item terlebih dahulu.', 'error');
-                return;
-            }
-
-            const isLoggedIn = !!localStorage.getItem('user_id'); // Cek apakah user_id ada
-
-            if (!isLoggedIn) {
-                if (confirm('Anda harus login untuk melanjutkan checkout. Apakah Anda ingin login sekarang?')) {
-                    window.location.href = 'login.html';
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', async () => {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                if (cart.length === 0) {
+                    showResponseMessage('Keranjang Anda kosong. Tambahkan item terlebih dahulu.', 'error');
+                    return;
                 }
-                return;
-            }
 
-            // Jika sudah login, lanjutkan ke halaman checkout
-            window.location.href = 'checkout.html';
-        });
+                // Cek status login dari server
+                try {
+                    const response = await fetch('api/get_session.php');
+                    const data = await response.json();
+                    
+                    if (!data.isLoggedIn) {
+                        if (confirm('Anda harus login untuk melanjutkan checkout. Apakah Anda ingin login sekarang?')) {
+                            window.location.href = 'login.html';
+                        }
+                        return;
+                    }
+
+                    // Jika sudah login, lanjutkan ke halaman checkout
+                    window.location.href = 'checkout.html';
+                } catch (error) {
+                    console.error('Error checking login status:', error);
+                    showResponseMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                }
+            });
+        }
 
         renderCart();
         updateCartIconQuantity();
         updateAuthUI();
     }
 
-
     // ===========================================
     // Halaman Checkout (checkout.html)
     // ===========================================
     if (window.location.pathname.includes('checkout.html')) {
-        const orderSummaryList = document.getElementById('orderSummaryList');
-        const checkoutCartTotal = document.getElementById('checkoutCartTotal');
+        const summaryItemsContainer = document.getElementById('summaryItemsContainer');
         const checkoutDeliveryFee = document.getElementById('checkoutDeliveryFee');
-        const checkoutGrandTotal = document.getElementById('checkoutGrandTotal');
-        const placeOrderBtn = document.getElementById('placeOrderBtn');
-        const deliveryAddressInput = document.getElementById('deliveryAddress');
-        const orderNotesInput = document.getElementById('orderNotes');
+        const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
+        const placeOrderBtn = document.querySelector('.btn-place-order');
+        const checkoutForm = document.getElementById('checkoutForm');
 
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
         let subtotal = 0;
 
         function renderCheckoutSummary() {
-            orderSummaryList.innerHTML = '';
+            if (summaryItemsContainer) {
+                summaryItemsContainer.innerHTML = '';
+            }
             subtotal = 0;
 
             if (cart.length === 0) {
-                orderSummaryList.innerHTML = '<p>Keranjang Anda kosong. Silakan kembali ke menu.</p>';
-                placeOrderBtn.disabled = true;
+                if (summaryItemsContainer) {
+                    summaryItemsContainer.innerHTML = '<p>Keranjang Anda kosong. Silakan kembali ke menu.</p>';
+                }
+                if (placeOrderBtn) placeOrderBtn.disabled = true;
                 return;
             }
 
@@ -649,80 +673,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 const itemTotal = item.price * item.quantity;
                 subtotal += itemTotal;
 
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <span>${item.name} x ${item.quantity}</span>
-                    <span>${formatRupiah(itemTotal)}</span>
-                `;
-                orderSummaryList.appendChild(listItem);
+                if (summaryItemsContainer) {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'summary-item';
+                    itemDiv.innerHTML = `
+                        <span>${item.name} x ${item.quantity}</span>
+                        <span>${formatRupiah(itemTotal)}</span>
+                    `;
+                    summaryItemsContainer.appendChild(itemDiv);
+                }
             });
 
             const grandTotal = subtotal + deliveryFee;
 
-            checkoutCartTotal.textContent = formatRupiah(subtotal);
-            checkoutDeliveryFee.textContent = formatRupiah(deliveryFee);
-            checkoutGrandTotal.textContent = formatRupiah(grandTotal);
-            placeOrderBtn.disabled = false;
+            if (checkoutDeliveryFee) checkoutDeliveryFee.textContent = formatRupiah(deliveryFee);
+            if (checkoutTotalPrice) checkoutTotalPrice.textContent = formatRupiah(grandTotal);
+            if (placeOrderBtn) placeOrderBtn.disabled = false;
         }
 
-        placeOrderBtn.addEventListener('click', async () => {
-            const userId = localStorage.getItem('user_id');
-            const deliveryAddress = deliveryAddressInput.value.trim();
-            const orderNotes = orderNotesInput.value.trim();
+        if (placeOrderBtn) {
+            placeOrderBtn.addEventListener('click', async () => {
+                const namaLengkap = document.getElementById('nama_lengkap')?.value.trim();
+                const telepon = document.getElementById('telepon')?.value.trim();
+                const alamatLengkap = document.getElementById('alamat_lengkap')?.value.trim();
 
-            if (!userId) {
-                showResponseMessage('Anda harus login untuk menempatkan pesanan.', 'error');
-                return;
-            }
-            if (cart.length === 0) {
-                showResponseMessage('Keranjang Anda kosong.', 'error');
-                return;
-            }
-            if (!deliveryAddress) {
-                showResponseMessage('Alamat pengiriman tidak boleh kosong.', 'error');
-                return;
-            }
-
-            showResponseMessage('Menempatkan pesanan...', 'info');
-
-            try {
-                const response = await fetch('api/place_order.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        delivery_address: deliveryAddress,
-                        notes: orderNotes,
-                        items: cart,
-                        total_amount: subtotal + deliveryFee // Pastikan ini sesuai dengan kalkulasi di backend
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showResponseMessage(result.message, 'success');
-                    localStorage.removeItem('cart'); // Kosongkan keranjang setelah pesanan berhasil
-                    updateCartIconQuantity();
-                    setTimeout(() => {
-                        window.location.href = 'pesanan.php'; // Redirect ke halaman pesanan
-                    }, 2000);
-                } else {
-                    showResponseMessage(result.message, 'error');
+                if (cart.length === 0) {
+                    showResponseMessage('Keranjang Anda kosong.', 'error');
+                    return;
                 }
-            } catch (error) {
-                console.error('Error placing order:', error);
-                showResponseMessage('Terjadi kesalahan saat menempatkan pesanan. Silakan coba lagi.', 'error');
-            }
-        });
+                if (!namaLengkap || !telepon || !alamatLengkap) {
+                    showResponseMessage('Semua field harus diisi.', 'error');
+                    return;
+                }
+
+                const deliveryAddress = `${namaLengkap}\n${telepon}\n${alamatLengkap}`;
+
+                showResponseMessage('Menempatkan pesanan...', 'info');
+
+                try {
+                    const response = await fetch('api/place_order.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            delivery_address: deliveryAddress,
+                            notes: '',
+                            items: cart,
+                            total_amount: subtotal + deliveryFee
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        showResponseMessage(result.message, 'success');
+                        localStorage.removeItem('cart');
+                        updateCartIconQuantity();
+                        setTimeout(() => {
+                            window.location.href = 'pesanan.php';
+                        }, 2000);
+                    } else {
+                        showResponseMessage(result.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error placing order:', error);
+                    showResponseMessage('Terjadi kesalahan saat menempatkan pesanan. Silakan coba lagi.', 'error');
+                }
+            });
+        }
 
         renderCheckoutSummary();
         updateCartIconQuantity();
         updateAuthUI();
     }
-
 
     // ===========================================
     // Halaman Auth (login.html, daftar.html)
@@ -732,26 +756,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loginForm) {
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = loginForm.email.value;
+                const usernameOrEmail = loginForm.username_or_email.value;
                 const password = loginForm.password.value;
 
                 showResponseMessage('Mencoba login...', 'info');
 
                 try {
+                    const formData = new FormData();
+                    formData.append('username_or_email', usernameOrEmail);
+                    formData.append('password', password);
+
                     const response = await fetch('api/login.php', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password })
+                        body: formData
                     });
                     const result = await response.json();
 
-                    if (result.success) {
-                        localStorage.setItem('user_id', result.user_id); // Simpan ID pengguna
-                        localStorage.setItem('user_name', result.user_name); // Simpan nama pengguna
+                    if (result.status === 'success') {
                         showResponseMessage(result.message, 'success');
-                        updateAuthUI(); // Perbarui UI navbar
+                        updateAuthUI();
                         setTimeout(() => {
-                            window.location.href = 'index.html'; // Redirect ke halaman utama
+                            window.location.href = 'index.html';
                         }, 1500);
                     } else {
                         showResponseMessage(result.message, 'error');
@@ -762,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        updateAuthUI(); // Update UI navbar
+        updateAuthUI();
     }
 
     if (window.location.pathname.includes('daftar.html')) {
@@ -770,30 +795,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (registerForm) {
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const name = registerForm.name.value;
+                const username = registerForm.username.value;
                 const email = registerForm.email.value;
                 const password = registerForm.password.value;
-                const confirmPassword = registerForm.confirmPassword.value;
-
-                if (password !== confirmPassword) {
-                    showResponseMessage('Password dan konfirmasi password tidak cocok.', 'error');
-                    return;
-                }
+                const fullName = registerForm.full_name.value;
 
                 showResponseMessage('Mencoba mendaftar...', 'info');
 
                 try {
+                    const formData = new FormData();
+                    formData.append('username', username);
+                    formData.append('email', email);
+                    formData.append('password', password);
+                    formData.append('full_name', fullName);
+
                     const response = await fetch('api/register.php', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, password })
+                        body: formData
                     });
                     const result = await response.json();
 
-                    if (result.success) {
+                    if (result.status === 'success') {
                         showResponseMessage(result.message + ' Anda dapat login sekarang.', 'success');
                         setTimeout(() => {
-                            window.location.href = 'login.html'; // Redirect ke halaman login setelah berhasil daftar
+                            window.location.href = 'login.html';
                         }, 2000);
                     } else {
                         showResponseMessage(result.message, 'error');
@@ -804,35 +829,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        updateAuthUI(); // Update UI navbar
+        updateAuthUI();
     }
-
 
     // ===========================================
     // Halaman Profil (profil.html)
     // ===========================================
     if (window.location.pathname.includes('profil.html')) {
-        const profileForm = document.getElementById('profileForm');
-        const userId = localStorage.getItem('user_id');
+        const profileName = document.getElementById('profileName');
+        const profileUsername = document.getElementById('profileUsername');
+        const logoutProfileButton = document.getElementById('logoutProfileButton');
 
         async function loadUserProfile() {
-            if (!userId) {
-                showResponseMessage('Anda harus login untuk melihat profil.', 'error');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-                return;
-            }
-
             try {
-                const response = await fetch(`api/get_user_profile.php?user_id=${userId}`);
+                const response = await fetch('api/get_session.php');
                 const data = await response.json();
 
-                if (data.success) {
-                    profileForm.name.value = data.user.name;
-                    profileForm.email.value = data.user.email;
-                    profileForm.address.value = data.user.address || '';
-                    profileForm.phone.value = data.user.phone_number || '';
+                if (data.isLoggedIn) {
+                    if (profileName) profileName.textContent = data.user.full_name || data.user.username;
+                    if (profileUsername) profileUsername.textContent = `@${data.user.username}`;
                 } else {
-                    showResponseMessage(data.message, 'error');
+                    showResponseMessage('Anda harus login untuk melihat profil.', 'error');
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
                 }
             } catch (error) {
                 console.error('Error loading profile:', error);
@@ -840,46 +858,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (profileForm) {
-            profileForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = profileForm.name.value;
-                const email = profileForm.email.value;
-                const address = profileForm.address.value;
-                const phone = profileForm.phone.value;
-                const currentPassword = profileForm.currentPassword.value;
-                const newPassword = profileForm.newPassword.value;
-
-                showResponseMessage('Memperbarui profil...', 'info');
-
+        if (logoutProfileButton) {
+            logoutProfileButton.addEventListener('click', async () => {
                 try {
-                    const response = await fetch('api/update_user_profile.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: userId,
-                            name,
-                            email,
-                            address,
-                            phone_number: phone,
-                            current_password: currentPassword,
-                            new_password: newPassword
-                        })
-                    });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        localStorage.setItem('user_name', name); // Perbarui nama di localStorage jika berubah
-                        showResponseMessage(result.message, 'success');
-                        updateAuthUI(); // Perbarui UI navbar
-                        profileForm.currentPassword.value = ''; // Kosongkan field password
-                        profileForm.newPassword.value = '';
-                    } else {
-                        showResponseMessage(result.message, 'error');
-                    }
+                    await fetch('api/logout.php');
+                    showResponseMessage('Anda telah berhasil logout.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
                 } catch (error) {
-                    console.error('Error updating profile:', error);
-                    showResponseMessage('Terjadi kesalahan saat memperbarui profil.', 'error');
+                    console.error('Logout error:', error);
+                    showResponseMessage('Terjadi kesalahan saat logout.', 'error');
                 }
             });
         }
@@ -888,21 +877,28 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAuthUI();
     }
 
-
     // ===========================================
     // Halaman Utama (index.html)
     // ===========================================
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/madangbae/')) {
         const favoriteMenuGrid = document.getElementById('favoriteMenuGrid');
-        const homeSearchInput = document.getElementById('homeSearchInput'); // Search input on homepage
+        const homeSearchInput = document.getElementById('homeSearchInput');
+        const promoModal = document.getElementById('promoModal');
+        const closeButton = document.querySelector('.close-button');
+        const btnPromo = document.querySelector('.btn-promo');
+        const modalCtaButton = document.querySelector('.modal-cta-button');
 
         async function loadFavoriteProducts() {
             try {
-                // Asumsi ada API endpoint untuk menu favorit atau kita ambil semua lalu filter
                 const response = await fetch('api/get_products.php');
                 const products = await response.json();
                 
-                // Ambil 4 produk acak sebagai "favorit" untuk tujuan demo
+                if (products.status === 'error') {
+                    favoriteMenuGrid.innerHTML = '<p class="empty-orders-message">Gagal memuat menu favorit.</p>';
+                    return;
+                }
+                
+                // Ambil 4 produk acak sebagai "favorit"
                 const shuffled = [...products].sort(() => 0.5 - Math.random());
                 const favoriteProducts = shuffled.slice(0, 4); 
                 
@@ -921,13 +917,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'product-card'; // Re-use styling from menu page
+                productCard.className = 'food-card';
                 productCard.innerHTML = `
                     <img src="${product.image_url || 'https://via.placeholder.com/150'}" alt="${product.name}">
-                    <h3>${product.name}</h3>
-                    <p class="product-description">${product.description.substring(0, 70)}...</p>
-                    <p class="product-price">${formatRupiah(product.price)}</p>
-                    <button class="add-to-cart-btn" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image_url}">
+                    <h4>${product.name}</h4>
+                    <p class="product-description">${product.description ? product.description.substring(0, 70) + '...' : 'Tidak ada deskripsi'}</p>
+                    <p class="price">${formatRupiah(product.price)}</p>
+                    <button class="btn-order" data-id="${product.id}" data-name="${product.name}" data-price="${product.price}" data-image="${product.image_url}">
                         Tambah ke Keranjang
                     </button>
                 `;
@@ -935,7 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Add to cart event listeners for homepage products
-            document.querySelectorAll('#favoriteMenuGrid .add-to-cart-btn').forEach(button => {
+            document.querySelectorAll('#favoriteMenuGrid .btn-order').forEach(button => {
                 button.addEventListener('click', addToCartHome);
             });
         }
@@ -961,7 +957,35 @@ document.addEventListener('DOMContentLoaded', () => {
             showResponseMessage(`${name} ditambahkan ke keranjang!`, 'success');
         }
 
-        // Basic search functionality for homepage (can redirect to menu page with search query)
+        // Modal functionality
+        if (btnPromo && promoModal) {
+            btnPromo.addEventListener('click', function(e) {
+                e.preventDefault();
+                promoModal.style.display = 'flex';
+            });
+        }
+
+        if (closeButton && promoModal) {
+            closeButton.addEventListener('click', function() {
+                promoModal.style.display = 'none';
+            });
+        }
+
+        if (modalCtaButton) {
+            modalCtaButton.addEventListener('click', function() {
+                window.location.href = 'menu.html';
+            });
+        }
+
+        if (promoModal) {
+            window.addEventListener('click', function(event) {
+                if (event.target === promoModal) {
+                    promoModal.style.display = 'none';
+                }
+            });
+        }
+
+        // Search functionality
         if (homeSearchInput) {
             homeSearchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
@@ -973,8 +997,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        loadFavoriteProducts(); // Load favorite menus on homepage
+        loadFavoriteProducts();
         updateCartIconQuantity();
-        updateAuthUI(); // Perbarui UI autentikasi saat halaman dimuat
+        updateAuthUI();
     }
+
+    // Inisialisasi umum untuk semua halaman
+    updateCartIconQuantity();
+    updateAuthUI();
 });

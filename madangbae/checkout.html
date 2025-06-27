@@ -18,7 +18,9 @@
         </header>
 
         <main>
-            <section class="delivery-address-form">
+            <div id="responseMessage" class="response-message" style="display: none;"></div>
+            
+            <section class="checkout-section">
                 <h2>Alamat Pengiriman</h2>
                 <form id="checkoutForm">
                     <div class="form-group">
@@ -39,22 +41,18 @@
             <section class="order-summary">
                 <h2>Ringkasan Pesanan</h2>
                 <div class="summary-items-container" id="summaryItemsContainer">
-                    </div>
-                
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>(Dihitung Otomatis)</span> 
                 </div>
-                <div class="summary-row">
+                
+                <div class="summary-item">
                     <span>Ongkos Kirim</span>
                     <span id="checkoutDeliveryFee">Rp 8.000</span>
                 </div>
-                <div class="summary-row total">
+                <div class="summary-item total">
                     <span>Total Pembayaran</span>
                     <span id="checkoutTotalPrice">Rp 0</span>
                 </div>
 
-                <button type="submit" class="btn-place-order">Pesan Sekarang</button>
+                <button type="button" class="btn-place-order">Pesan Sekarang</button>
             </section>
         </main>
     </div>

@@ -1,12 +1,12 @@
 /* Pengaturan Dasar dan Variabel Warna */
 :root {
     --primary-color: #8C4A4A;
-    --background-color: #f7f0f0; /* Sedikit lebih lembut dari putih murni */
+    --background-color: #f7f0f0;
     --text-color-light: #FFFFFF;
     --text-color-dark: #333333;
     --input-bg: #D9D9D9;
     --card-bg: #FFFFFF;
-    --light-bg-color: #f4f7f6; /* Warna latar belakang umum untuk bagian terang */
+    --light-bg-color: #f4f7f6;
 }
 
 * {
@@ -25,6 +25,44 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* Response Message */
+.response-message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+}
+
+.response-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.response-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.response-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.empty-orders-message {
+    text-align: center;
+    color: #666;
+    padding: 30px;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
 }
 
 /* Header & Navigasi */
@@ -73,7 +111,7 @@ nav a:hover, nav a.active {
 .user-actions {
     display: flex;
     align-items: center;
-    gap: 15px; /* Memberi jarak antar item */
+    gap: 15px;
 }
 
 .user-actions a {
@@ -84,6 +122,23 @@ nav a:hover, nav a.active {
 .user-actions .cart-icon {
     font-size: 20px;
     color: var(--text-color-light);
+    position: relative;
+}
+
+.cart-quantity {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 5px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 14px;
+    display: none;
 }
 
 .user-actions .btn-signup {
@@ -99,8 +154,7 @@ nav a:hover, nav a.active {
     background-color: var(--input-bg);
 }
 
-
-/* Bagian Hero (Untuk index.html) */
+/* Bagian Hero */
 #hero {
     padding: 40px 0;
     background-color: var(--primary-color);
@@ -108,10 +162,9 @@ nav a:hover, nav a.active {
     text-align: center;
 }
 
-/* Kolom pencarian umum */
 .search-wrapper {
     position: relative;
-    margin-bottom: 30px; /* Jarak bawah default untuk search bar */
+    margin-bottom: 30px;
 }
 
 .search-wrapper i {
@@ -131,16 +184,12 @@ nav a:hover, nav a.active {
     font-size: 16px;
 }
 
-/* Untuk bagian hero di menu.html */
-#menu-page-hero.hero-section-menu {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    background-color: var(--background-color);
-}
-
-/* Menggeser search-wrapper di halaman menu.html */
-#menu-page-hero .search-wrapper {
-    margin-top: 50px; /* Atur jarak dari atas */
+.menu-search-wrapper {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .promo-banner {
@@ -182,8 +231,7 @@ nav a:hover, nav a.active {
     width: 120px;
 }
 
-/* Bagian Menu Umum */
-/* Ini adalah bagian untuk section #menu di menu.html dan #favoriteMenu di index.html */
+/* Bagian Menu */
 #menu, #favoriteMenu {
     padding: 60px 0;
 }
@@ -195,29 +243,27 @@ nav a:hover, nav a.active {
     color: var(--primary-color);
 }
 
-/* Tata letak untuk menu favorit di index.html (grid) */
 .menu-grid-index {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
 }
 
-/* Tata letak untuk menu lengkap di menu.html (GRID - Horizontal) */
-.menu-grid { /* Ini adalah ID untuk menu.html */
-    display: grid; /* Gunakan Grid untuk tata letak horizontal */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 280px min-width per kolom */
-    gap: 30px; /* Jarak antar kartu menu */
-    justify-items: center; /* Pusatkan item di dalam grid cells */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    justify-items: center;
     padding: 20px 0;
 }
 
-/* Food Card styling umum */
+/* Food Card styling */
 .food-card {
     background-color: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     transition: transform 0.3s, box-shadow 0.3s;
-    text-align: center; /* Teks di tengah secara default */
+    text-align: center;
     padding: 20px;
 }
 
@@ -226,28 +272,33 @@ nav a:hover, nav a.active {
     box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
-/* Styling food-card di index.html (grid) */
 .menu-grid-index .food-card {
-    width: auto; /* Biarkan grid mengatur lebar */
-    display: block; /* Agar img, h4, p, button di bawahnya */
+    width: auto;
+    display: block;
 }
+
 .menu-grid-index .food-card img {
     width: 100%;
     max-width: 180px;
     height: 180px;
     object-fit: contain;
     margin-bottom: 15px;
-    margin-left: auto; /* Pusatkan gambar */
-    margin-right: auto; /* Pusatkan gambar */
+    margin-left: auto;
+    margin-right: auto;
 }
+
 .menu-grid-index .food-card h4 {
     font-size: 20px;
     margin-bottom: 5px;
 }
+
 .menu-grid-index .food-card p.price {
     font-size: 18px;
     margin-bottom: 15px;
+    color: var(--primary-color);
+    font-weight: 600;
 }
+
 .menu-grid-index .food-card .btn-order {
     padding: 10px 30px;
     font-size: 16px;
@@ -256,40 +307,57 @@ nav a:hover, nav a.active {
     margin-top: 0;
 }
 
-
-/* Styling food-card di menu.html (Horizontal) */
 .menu-grid .food-card {
-    width: 100%; /* Ambil lebar penuh di grid cell */
-    max-width: 320px; /* Batasi lebar kartu untuk tampilan yang rapi */
-    display: flex; /* Konten di dalam kartu akan horizontal */
-    flex-direction: column; /* Konten di dalam kartu tetap tumpuk vertikal */
-    align-items: center; /* Pusatkan konten horizontal di dalam kartu */
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
     text-align: center;
 }
+
 .menu-grid .food-card img {
-    width: 150px; /* Ukuran gambar yang sesuai untuk tampilan kartu */
+    width: 150px;
     height: 150px;
     object-fit: contain;
     margin-bottom: 15px;
     margin-right: 0;
 }
+
 .menu-grid .food-card h4 {
     font-size: 1.2em;
     margin-bottom: 5px;
 }
+
 .menu-grid .food-card p.price {
     font-size: 1.1em;
     margin-bottom: 15px;
+    color: var(--primary-color);
+    font-weight: 600;
     white-space: normal;
 }
+
 .menu-grid .food-card .btn-order {
     margin-left: 0;
     padding: 10px 20px;
     font-size: 1em;
-    width: 80%; /* Lebar tombol yang lebih besar */
+    width: 80%;
 }
 
+.btn-order {
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.3s;
+}
+
+.btn-order:hover {
+    opacity: 0.9;
+}
 
 /* Footer */
 footer {
@@ -311,7 +379,7 @@ footer {
     }
 
     nav {
-        display: none; /* Sembunyikan navigasi di mobile, bisa diganti dengan hamburger menu jika diinginkan */
+        display: none;
     }
 
     .user-actions {
@@ -332,127 +400,63 @@ footer {
         font-size: 28px;
     }
 
-    /* food-card umum di mobile (akan di-override jika ada yang lebih spesifik) */
     .food-card {
         width: 100%;
         max-width: none;
-        flex-direction: column; /* Default ke kolom di mobile */
+        flex-direction: column;
         text-align: center;
         padding: 15px;
     }
+
     .food-card img {
         width: 100%;
-        max-width: 150px; /* Batasi ukuran gambar di mobile food card */
+        max-width: 150px;
         height: auto;
         margin-bottom: 10px;
         margin-left: auto;
         margin-right: auto;
     }
+
     .food-card .btn-order {
         width: 100%;
         margin-left: 0;
         margin-top: 10px;
     }
 
-
-    /* Responsif untuk menu-grid-index (index.html) */
     .menu-grid-index {
-        grid-template-columns: 1fr; /* Satu kolom di mobile */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
 
-
-    /* Responsif untuk menu-grid (menu.html) - Sekarang juga pakai 1 kolom di mobile */
     .menu-grid {
-        grid-template-columns: 1fr; /* Satu kolom di mobile untuk menu lengkap */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
+
     .menu-grid .food-card {
-        /* Konten kartu tetap vertikal di mobile, sama seperti food-card umum */
         flex-direction: column;
         text-align: center;
         padding: 15px;
     }
+
     .menu-grid .food-card img {
         width: 120px;
         height: 120px;
         margin-bottom: 10px;
     }
+
     .menu-grid .food-card h4 {
         font-size: 1.1em;
     }
+
     .menu-grid .food-card p.price {
         font-size: 1em;
         margin-bottom: 10px;
     }
+
     .menu-grid .food-card .btn-order {
         padding: 8px 15px;
         font-size: 0.9em;
         width: 90%;
     }
 }
-/* style.css (Tambahkan di bagian bawah atau di tempat yang relevan) */
-
-/* Menambahkan sedikit margin ke search wrapper di halaman menu.html */
-.menu-search-wrapper {
-    margin-top: 20px; /* Jarak dari judul "Daftar Menu" */
-    margin-bottom: 40px; /* Jarak dari grid menu di bawahnya */
-    max-width: 600px; /* Batasi lebar agar tidak terlalu lebar di desktop */
-    margin-left: auto; /* Pusatkan */
-    margin-right: auto; /* Pusatkan */
-}
-
-/* Penyesuaian untuk search-wrapper di hero section index.html */
-#hero .search-wrapper {
-    margin-bottom: 30px; /* Pastikan ada jarak yang cukup dari promo banner */
-}
-
-/* Pastikan food-card di menu.html tetap horizontal (grid) seperti permintaan sebelumnya */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    justify-items: center;
-    padding: 20px 0;
-}
-
-.menu-grid .food-card {
-    display: flex;
-    flex-direction: column; /* Konten di dalam kartu tetap tumpuk vertikal */
-    align-items: center;
-    padding: 20px;
-    text-align: center;
-    width: 100%; /* Ambil lebar penuh di grid cell */
-    max-width: 320px; /* Batasi lebar kartu */
-}
-
-.menu-grid .food-card img {
-    width: 150px;
-    height: 150px;
-    object-fit: contain;
-    margin-bottom: 15px;
-}
-/* style.css */
-/* ... kode CSS lainnya ... */
-
-.cart-icon {
-    position: relative; /* Penting untuk penempatan angka */
-    display: inline-block; /* Agar span bisa diposisikan relatif terhadapnya */
-}
-
-.cart-quantity {
-    position: absolute;
-    top: -8px; /* Atur posisi vertikal */
-    right: -8px; /* Atur posisi horizontal */
-    background-color: #ff0000; /* Warna latar belakang angka */
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-    border-radius: 50%; /* Bentuk lingkaran */
-    padding: 2px 5px;
-    min-width: 18px; /* Ukuran minimum untuk satu atau dua digit */
-    text-align: center;
-    line-height: 14px; /* Pusatkan teks secara vertikal */
-    display: none; /* Sembunyikan secara default jika kuantitas 0 */
-}
-
