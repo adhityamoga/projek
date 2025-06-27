@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - madangBae</title>
+    <link rel="stylesheet" href="profile-style.css"> <!-- Untuk gaya dasar seperti font, body, container -->
+    <link rel="stylesheet" href="css/profile.css"> <!-- Styling khusus untuk halaman profil ini -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<style>
+    /* css/profile.css */
+/* Styling khusus untuk halaman profil (profil.html) dengan struktur baru */
+
+body {
+    background-color: var(--background-color); /* Dari style.css */
+    color: var(--text-color-dark); /* Dari style.css */
+}
+
+.profile-container {
+    max-width: 600px; /* Batasi lebar container profil */
+    margin: 0 auto; /* Pusatkan container */
+    padding-top: 40px; /* Jarak dari atas */
+    padding-bottom: 40px; /* Jarak dari bawah */
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ff00aa;
+}
+
+.profile-header .back-arrow {
+    font-size: 24px;
+    color: var(--primary-color); /* Dari style.css */
+    margin-right: 20px;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.profile-header .back-arrow:hover {
+    opacity: 0.8;
+}
+
+.profile-header h1 {
+    font-size: 28px;
+    color: var(--primary-color); /* Dari style.css */
+    margin: 0;
+}
+
+.profile-card {
+    background-color: var(--card-bg); /* Dari style.css */
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Pusatkan konten */
+    text-align: center;
+}
+
+.user-info {
+    margin-bottom: 30px;
+}
+
+.user-avatar-icon {
+    font-size: 60px;
+    color: var(--primary-color); /* Dari style.css */
+    margin-bottom: 15px;
+}
+
+.user-info h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: var(--text-color-dark);
+}
+
+.user-info p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.profile-options {
+    list-style: none;
+    width: 100%;
+    margin-bottom: 30px; /* Jarak dari tombol logout */
+}
+
+.profile-options li {
+    margin-bottom: 15px;
+}
+
+.profile-options a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #ff7280; /* Latar belakang item opsi */
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color-dark);
+    transition: background-color 0.3s ease;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.03); /* Sedikit shadow */
+}
+
+.profile-options a:hover {
+    background-color: #ff6ed4d0; /* Sedikit lebih gelap saat hover */
+}
+
+.profile-options i {
+    font-size: 1.2em;
+    color: var(--primary-color);
+    margin-right: 15px;
+    width: 25px; /* Lebar tetap untuk ikon */
+    text-align: center;
+}
+
+.profile-options span {
+    font-size: 1em;
+    font-weight: 500;
+}
+
+/* Styling untuk tombol Logout yang lebih menarik */
+.btn-logout-profile {
+    /* Warna dasar merah */
+    background-color: #dc3545;
+    color: var(--text-color-light);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 600; /* Sedikit lebih tebal */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transisi untuk semua properti */
+    width: 80%;
+    max-width: 250px;
+    letter-spacing: 0.5px; /* Jarak antar huruf */
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2); /* Shadow yang lebih menonjol */
+    background-image: linear-gradient(to right, #dc3545, #e04a5a); /* Gradient */
+}
+
+.btn-logout-profile:hover {
+    background-color: #c82333; /* Warna lebih gelap saat hover */
+    background-image: linear-gradient(to right, #c82333, #dc3545); /* Perubahan gradient saat hover */
+    transform: translateY(-2px); /* Efek sedikit terangkat */
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3); /* Shadow lebih besar saat hover */
+}
+
+.btn-logout-profile:active {
+    transform: translateY(0); /* Kembali ke posisi semula saat diklik */
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2); /* Shadow lebih kecil saat aktif */
+}
+
+
+/* Respons message di halaman profil */
+.response-message {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.response-message.success {
+    background-color: #ff0783;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.response-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* Responsif untuk Layar Kecil di Profil */
+@media (max-width: 768px) {
+    .profile-container {
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .profile-header {
+        margin-bottom: 20px;
+    }
+
+    .profile-header h1 {
+        font-size: 24px;
+    }
+
+    .user-avatar-icon {
+        font-size: 50px;
+    }
+
+    .user-info h2 {
+        font-size: 20px;
+    }
+
+    .user-info p {
+        font-size: 0.9em;
+    }
+
+    .profile-options li {
+        margin-bottom: 10px;
+    }
+
+    .profile-options a {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+
+    .profile-options i {
+        font-size: 1em;
+        margin-right: 10px;
+    }
+
+    .btn-logout-profile {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        width: 100%;
+    }
+}
+
+</style>
+
+<body>
+
+    <main>
+        <div class="container profile-container">
+            <div class="profile-header">
+                <a href="index.html" class="back-arrow"><i class="fa-solid fa-arrow-left"></i></a>
+                <h1>Profil Saya</h1>
+            </div>
+
+            <div id="responseMessage" class="response-message" style="display: none;"></div>
+
+            <div class="profile-card">
+                <div class="user-info">
+                    <i class="fa-solid fa-user user-avatar-icon"></i>
+                    <h2 id="profileName">Memuat Nama...</h2> <!-- ID untuk Nama Lengkap (full_name) -->
+                    <p id="profileUsername">Memuat Username...</p> <!-- ID untuk Username -->
+                </div>
+
+                <ul class="profile-options">
+                    <li>
+                        <a href="pesanan.html">
+                            <i class="fa-solid fa-receipt"></i> <span>Pesanan Saya</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Data & Privasi</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Pengaturan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Tentang</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Tombol Logout ditempatkan di sini, di dalam profile-card -->
+                <button id="logoutProfileButton" class="btn-logout-profile">Logout</button>
+            </div> 
+        </div> 
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

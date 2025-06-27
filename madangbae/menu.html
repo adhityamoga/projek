@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - madangBae</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://i.imgur.com/gY5G115.png" alt="madangBae Logo">
+                <span>madangBae</span>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="menu.html" class="active">Menu</a>
+                <a href="pesanan.php">Pesanan</a>
+                <a href="keranjang.html">Keranjang</a>
+            </nav>
+            <div class="user-actions">
+                </a>
+                <span></span> <!-- Untuk "Halo, Nama!" -->
+                <a href="profil.html" class="btn-signup">Profil Saya</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="menu">
+            <div class="container">
+                <h2>Daftar Menu</h2>
+                <div class="search-wrapper menu-search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="menuSearchInput" placeholder="Cari makanan di sini...">
+                </div>
+
+                <div class="menu-grid" id="menuGrid">
+                    <!-- Menu items will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 madangBae. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

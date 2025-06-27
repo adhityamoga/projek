@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>madangBae - Pesan Makanan Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<style>
+    /* style.css */
+
+/* --- Promo Modal Styles --- */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    padding: 20px; /* Add some padding around the modal for smaller screens */
+    box-sizing: border-box; /* Include padding in width/height */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Center the modal content */
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%; /* Adjust width for responsiveness */
+    max-width: 600px; /* Max width for larger screens */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    text-align: center; /* Center text content */
+    animation: fadeIn 0.3s ease-out; /* Simple fade-in animation */
+    max-height: 90vh; /* Max height to prevent overflow on small screens */
+    overflow-y: auto; /* Scroll if content is too long */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #333;
+    text-decoration: none;
+}
+
+.modal-content h2 {
+    color: #E74C3C; /* A striking red color for emphasis */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+.modal-promo-image {
+    max-width: 80%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.modal-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.modal-content h3 {
+    color: #333;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.modal-content ul {
+    list-style: none; /* Remove default bullet points */
+    padding: 0;
+    margin-bottom: 25px;
+    text-align: left; /* Align list items to the left */
+}
+
+.modal-content ul li {
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.modal-content ul li strong {
+    color: #E74C3C; /* Highlight important promo codes/dates */
+}
+
+.modal-cta-button {
+    background-color: #FF6B6B; /* Pinkish-red, matching theme */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none; /* Ensure it looks like a button even if it's an anchor */
+    display: inline-block; /* Allows padding and margin */
+    margin-top: 15px;
+}
+
+.modal-cta-button:hover {
+    background-color: #E74C3C; /* Darker pink on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.8em;
+    }
+
+    .modal-content p {
+        font-size: 1em;
+    }
+
+    .modal-content h3 {
+        font-size: 1.2em;
+    }
+
+    .modal-cta-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}
+</style>
+
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="https://i.imgur.com/gY5G115.png" alt="madangBae Logo">
+                <span>madangBae</span>
+            </div>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="menu.html">Menu</a>
+                <a href="pesanan.php">Pesanan</a>
+                <a href="keranjang.html">Keranjang</a>
+            </nav>
+            <div class="user-actions">
+                <span></span> <a href="profil.html" class="btn-signup">Profil Saya</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="container">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="homeSearchInput" placeholder="Cari makanan favoritmu di sini...">
+                </div>
+
+                <div class="promo-banner">
+                    <div class="promo-text">
+                        <h3>PROMO MAKANAN</h3>
+                        <p style="color: chocolate;">DISKON HINGGA <strong>20%</strong></p>
+                        <a href="#" class="btn-promo">Check Promo</a>
+                    </div>
+                    <img src="https://i.imgur.com/rS25g4s.png" alt="Promo Makanan">
+                </div>
+            </div>
+        </section>
+
+        <section id="favoriteMenu">
+            <div class="container">
+                <h2>Menu Favorit</h2>
+                <div class="menu-grid-index" id="favoriteMenuGrid">
+                    </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 madangBae. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="promoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Promo Spesial!</h2>
+            <img src="https://i.imgur.com/rS25g4s.png" alt="Promo Modal Image" class="modal-promo-image">
+            <p>Dapatkan **DISKON HINGGA 20%** untuk semua menu pilihan kami! Jangan lewatkan kesempatan ini untuk menikmati hidangan favorit Anda dengan harga lebih hemat.</p>
+            <h3>Syarat & Ketentuan:</h3>
+            <ul>
+                <li>Berlaku untuk pembelian minimum Rp 50.000.</li>
+                <li>Hanya berlaku untuk pesanan yang dilakukan melalui aplikasi mobile atau website.</li>
+                <li>Promo tidak dapat digabungkan dengan promo lainnya.</li>
+                <li>Berlaku hingga 31 Juli 2025.</li>
+                <li>Promo otomatis diaplikasikan saat checkout (jika memenuhi syarat) atau gunakan kode promo: <strong>MADANGBARU20</strong></li>
+                <li><strong>PROMO SAAT INI TIDAK ADA</strong></li>
+            </ul>
+            <button class="btn-primary modal-cta-button">Pesan Sekarang & Nikmati Promo!</button>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
